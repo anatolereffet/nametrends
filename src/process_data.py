@@ -10,4 +10,4 @@ df = (
     .sort_values("annee")
 )
 
-df.to_csv("./data/dpt2020.csv", sep=";")
+df.to_csv("./data/dpt2020.csv", sep=";", index=False)

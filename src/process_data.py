@@ -6,8 +6,8 @@ df = (
     .loc[lambda df: df["prenoms"] != "_PRENOMS_RARES"]
     .loc[lambda df: df["annee"] != "XXXX"]
     .loc[lambda df: df["dpt"] != "XX"]
+    .loc[lambda df: df["prenoms"].str.len() > 1]
     .sort_values("annee")
-    .drop("sexe", axis=1)
 )
 
-print(df.columns)
+df.to_csv("./data/dpt2020.csv", sep=";")

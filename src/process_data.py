@@ -13,7 +13,7 @@ df = (
 
 df.to_csv("./data/dpt2020.csv", sep=";", index=False)
 
-# Correct geojson
+# Departments geojson, correction of corsica
 with open("./data/departement_avec_outremer_rapprochee.geojson", "r") as file:
     geo_data = json.load(file)
 
@@ -22,4 +22,16 @@ for french_dept in geo_data["features"]:
         french_dept["properties"]["code"] = "20"
 
 with open("./data/departement_avec_outremer_rapprochee.geojson", "w+") as f:
+    json.dump(geo_data, f, indent=2)
+
+# IDF geojson
+with open("./data/idf.geojson", "r") as file:
+    geo_data = json.load(file)
+
+# Filter on idf polygon
+geo_data["features"] = geo_data["features"][0]
+# Rename the code to IDF
+geo_data["features"]["properties"]["code"] = "IDF"
+
+with open("./data/idf.geojson", "w+") as f:
     json.dump(geo_data, f, indent=2)

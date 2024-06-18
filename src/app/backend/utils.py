@@ -102,6 +102,8 @@ FRENCH_DEPARTMENTS = [
     "974",
 ]
 
+POSSIBLE_YEARS = [str(year) for year in range(1900, 2021)]
+
 
 def add_missing_departments(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -112,20 +114,47 @@ def add_missing_departments(df: pd.DataFrame) -> pd.DataFrame:
     Args:
         df (pd.DataFrame): filtered dataframe
     """
-    return (
-        df.pivot_table(
-            index=["annee", "prenoms"], columns="dpt", values="nombre", fill_value=0
-        )
-        .reindex(
-            columns=pd.Index(df["dpt"].unique()).union(FRENCH_DEPARTMENTS), fill_value=0
-        )
-        .reset_index()
-        .melt(
-            id_vars=["annee", "prenoms"],
-            value_vars=FRENCH_DEPARTMENTS,
-            var_name="dpt",
-            value_name="nombre",
-        )
-        .sort_values(by=["annee", "prenoms", "dpt"])
-        .reset_index(drop=True)
+    existing_dpts = df["dpt"].unique()
+    missing_dpts = sorted(
+        [str(dpt) for dpt in FRENCH_DEPARTMENTS if dpt not in existing_dpts]
     )
+    length = len(missing_dpts)
+    tmp_df = pd.DataFrame(
+        {
+            "sexe": [df["sexe"].iloc[0]] * length,
+            "prenoms": [df["prenoms"].iloc[0]] * length,
+            "annee": [df["annee"].iloc[0]] * length,
+            "dpt": missing_dpts,
+            "nombre": [0] * length,
+        }
+    )
+    result_df = pd.concat([df, tmp_df]).reset_index().drop(columns=["index"])
+
+    return result_df
+
+
+def add_missing_years(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Usable after a filter on a specific name
+    adds any year where the name hasn't occured in that year
+    and sets the number of births to 0.
+
+    Args:
+        df (pd.DataFrame): filtered dataframe
+    """
+    print("here")
+    existing_dpts = df["annee"].unique()
+    print("here")
+    missing_years = sorted(
+        [str(dpt) for dpt in POSSIBLE_YEARS if dpt not in existing_dpts]
+    )
+
+    tmp_df = pd.DataFrame(
+        {
+            "annee": missing_years,
+            "nombre": [0] * len(missing_years),
+        }
+    )
+    result_df = pd.concat([df, tmp_df]).reset_index().drop(columns=["index"])
+
+    return result_df

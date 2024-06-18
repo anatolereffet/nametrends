@@ -87,5 +87,6 @@ ipython_config.py
 # Environments
 .venv
 
-#Folders
+#Folders & altair cache files
 /data
+altair-data-*.json

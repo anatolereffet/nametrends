@@ -29,9 +29,9 @@ with open("./data/idf.geojson", "r") as file:
     geo_data = json.load(file)
 
 # Filter on idf polygon
-geo_data["features"] = geo_data["features"][0]
+geo_data["features"] = [geo_data["features"][0]]
 # Rename the code to IDF
-geo_data["features"]["properties"]["code"] = "IDF"
+geo_data["features"][0]["properties"]["code"] = "IDF"
 
 with open("./data/idf.geojson", "w+") as f:
     json.dump(geo_data, f, indent=2)

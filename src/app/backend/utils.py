@@ -142,9 +142,9 @@ def add_missing_years(df: pd.DataFrame) -> pd.DataFrame:
     Args:
         df (pd.DataFrame): filtered dataframe
     """
-    print("here")
+
     existing_dpts = df["annee"].unique()
-    print("here")
+
     missing_years = sorted(
         [str(dpt) for dpt in POSSIBLE_YEARS if dpt not in existing_dpts]
     )

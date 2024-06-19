@@ -3,7 +3,11 @@ import json
 
 
 def load_babynames():
-    return pd.read_csv("./data/dpt2020.csv", sep=";")
+    return pd.read_csv(
+        "./data/dpt2020.csv",
+        sep=";",
+        dtype={"sexe": int, "prenoms": str, "dpt": str, "annee": str, "nombre": int},
+    )
 
 
 def load_map():

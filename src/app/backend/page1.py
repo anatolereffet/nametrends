@@ -1,8 +1,6 @@
 from dash import Input, Output
-from src.app.backend.utils import add_missing_departments, add_missing_years
 import altair as alt
 import pandas as pd
-from src.app.backend.utils import FRENCH_DEPARTMENTS
 
 
 def firstpage_callbacks(app):
@@ -48,24 +46,19 @@ def firstpage_callbacks(app):
 
         color_condition = alt.condition(
             single,
-            alt.Color("nombre:Q", scale=alt.Scale(scheme="purplered")),
+            alt.Color("prenoms:N", scale=alt.Scale(scheme="accent")),
             alt.value("lightgray"),
         )
 
         map_w_idf = (
             alt.Chart(subset_w_idf)
             .mark_geoshape(stroke="black")
-            .encode(tooltip=["prenoms", "code", "nombre"], color=color_condition)
-            .properties(width=800, height=600)
+            .encode(tooltip=["prenoms", "nom","code", "nombre"], color=color_condition)
+            .properties(width=666, height=500)
             .add_params(single)
             # .add_selection(single)
         )
 
-        text_w_idf = (
-            alt.Chart(subset_w_idf)
-            .mark_text(color="black", fontSize=10)
-            .encode(latitude="lat", longitude="long", text="prenoms:N")
-        )
 
         map_idf_only = (
             alt.Chart(idf_only)
@@ -75,23 +68,18 @@ def firstpage_callbacks(app):
                 color=color_condition,
                 text="prenoms",
             )
-            .properties(width=400, height=300)
+            .properties(width=333, height=250)
             .add_params(single)
             # .add_selection(single)
         )
 
-        text_idf_only = (
-            alt.Chart(idf_only)
-            .mark_text(color="black", fontSize=10)
-            .encode(latitude="lat", longitude="long", text="prenoms:N")
-        )
 
         spacer = (
-            alt.Chart().mark_text().encode(text=alt.value("")).properties(height=175)
+            alt.Chart().mark_text().encode(text=alt.value("")).properties(height=125)
         )
 
-        centered_map_idf = alt.vconcat(spacer, map_idf_only + text_idf_only, spacer)
-        fig = (map_w_idf + text_w_idf) | centered_map_idf
+        centered_map_idf = alt.vconcat(spacer, map_idf_only, spacer)
+        fig = (map_w_idf) | centered_map_idf
 
         # print(fig.to_dict())
 

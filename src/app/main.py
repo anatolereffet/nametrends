@@ -2,7 +2,7 @@ import dash
 import dash_bootstrap_components as dbc
 from backend.callbacks import register_callbacks
 from frontend.layout import serve_layout
-from src.app.backend.load_data import load_map, load_babynames
+from backend.load_data import load_map, load_babynames
 import geopandas as gpd
 
 app = dash.Dash(

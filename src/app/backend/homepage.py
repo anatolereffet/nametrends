@@ -1,6 +1,6 @@
 import plotly.express as px
 from dash import Input, Output, dash_table
-from src.app.backend.utils import add_missing_departments, add_missing_years
+from backend.utils import add_missing_departments, add_missing_years
 
 
 def home_callbacks(app):

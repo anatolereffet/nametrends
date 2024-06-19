@@ -1,8 +1,8 @@
 from dash import Output, Input, html
 
-from src.app.frontend.pages import homepage, page1
-from src.app.backend.homepage import home_callbacks
-from src.app.backend.page1 import firstpage_callbacks
+from frontend.pages import homepage, page1
+from backend.homepage import home_callbacks
+from backend.page1 import firstpage_callbacks
 
 
 def register_layout_callback(app):

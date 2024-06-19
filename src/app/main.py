@@ -15,11 +15,9 @@ app.title = "French Name Trends"
 # Load data in cache
 app.df = load_babynames()
 app.geojson = load_map()
-app.departments = gpd.read_file("./data/departement_avec_outremer_rapprochee.geojson")
+departments = gpd.read_file("./data/departement_avec_outremer_rapprochee.geojson")
 app.regions = gpd.read_file("./data/idf.geojson")
-app.dpd_table = app.departments.merge(
-    app.df, how="right", left_on="code", right_on="dpt"
-)
+app.dpd_table = departments.merge(app.df, how="right", left_on="code", right_on="dpt")
 # Load initial layout
 app.layout = lambda: serve_layout(app)
 

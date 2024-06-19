@@ -5,46 +5,6 @@ import pandas as pd
 from src.app.backend.utils import FRENCH_DEPARTMENTS
 
 
-def add_empty_departments(
-    table: pd.DataFrame, departments_polygons: pd.DataFrame
-) -> pd.DataFrame:
-    """
-    Add the missing departments with the corresponding polygons.
-
-    This is a hardcoded function for the year and sex
-    will be fixed later
-
-    Args:
-        table (pd.DataFrame): filtered table
-        departments_polygons (pd.DataFrame): dataframe holding code, name and shape of the departments
-
-    Returns:
-        pd.DataFrame: full table with missing polygons
-    """
-    missing_dpts = sorted(
-        [str(dpt) for dpt in FRENCH_DEPARTMENTS if dpt not in table.dpt.unique()]
-    )
-    mia_dpts = {
-        "code": missing_dpts,
-        "nom": [],
-        "geometry": [],
-        "sexe": [1] * len(missing_dpts),
-        "prenoms": [" "] * len(missing_dpts),
-        "annee": [2000] * len(missing_dpts),
-        "dpt": missing_dpts,
-        "nombre": [0] * len(missing_dpts),
-    }
-    for dpt_code in missing_dpts:
-        _, dpt_name, polygon_dpt = departments_polygons[
-            departments_polygons["code"] == dpt_code
-        ].squeeze()
-        mia_dpts["nom"].append(dpt_name)
-        mia_dpts["geometry"].append(polygon_dpt)
-
-    df = pd.concat([table, pd.DataFrame(mia_dpts)]).reset_index()
-    return df
-
-
 def firstpage_callbacks(app):
     @app.callback(
         [
@@ -60,12 +20,8 @@ def firstpage_callbacks(app):
         print(name)
         data = app.df
         names = app.dpd_table
-        depts_polygon_table = app.departments
-
         names.annee = names.annee.astype(int)
         year = names.loc[(names["annee"] >= 2000) & data["sexe"] == 1]
-
-        year = add_empty_departments(year, depts_polygon_table)
 
         subset = year.loc[year.groupby("dpt")["nombre"].idxmax()]
         regions = app.regions

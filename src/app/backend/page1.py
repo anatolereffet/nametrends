@@ -18,10 +18,9 @@ def firstpage_callbacks(app):
         # debug statements, ensure callback is called
         print("Callback page1")
         print(name)
-        data = app.df
         names = app.dpd_table
         names.annee = names.annee.astype(int)
-        year = names.loc[(names["annee"] >= 2000) & data["sexe"] == 1]
+        year = names.loc[(names["annee"] >= 2000) & names["sexe"] == 1]
 
         subset = year.loc[year.groupby("dpt")["nombre"].idxmax()]
         regions = app.regions

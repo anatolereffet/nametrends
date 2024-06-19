@@ -9,16 +9,17 @@ def firstpage_callbacks(app):
             Output("graph-altair", "spec"),
         ],
         [
-            Input("dropdown-names_altair", "value"),
+            Input("slider-altair-map", "value"),
         ],
     )
-    def update_altair_map(name):
+    def update_altair_map(slider_year):
         # debug statements, ensure callback is called
         print("Callback page1")
-        print(name)
+        print(f"chosen year {slider_year}")
+
         names = app.dpd_table
         names.annee = names.annee.astype(int)
-        year = names.loc[(names["annee"] >= 2000) & names["sexe"] == 1]
+        year = names.loc[(names["annee"] >= slider_year) & names["sexe"] == 1]
 
         subset = year.loc[year.groupby("dpt")["nombre"].idxmax()]
         regions = app.regions
@@ -41,7 +42,6 @@ def firstpage_callbacks(app):
         regions["dpt"] = "IDF"
         subset_w_idf = pd.concat([subset.loc[~subset["code"].isin(IDF)], regions])
 
-        # single = alt.selection_single()
         single = alt.selection_point()
 
         color_condition = alt.condition(
@@ -53,12 +53,10 @@ def firstpage_callbacks(app):
         map_w_idf = (
             alt.Chart(subset_w_idf)
             .mark_geoshape(stroke="black")
-            .encode(tooltip=["prenoms", "nom","code", "nombre"], color=color_condition)
+            .encode(tooltip=["prenoms", "nom", "code", "nombre"], color=color_condition)
             .properties(width=666, height=500)
             .add_params(single)
-            # .add_selection(single)
         )
-
 
         map_idf_only = (
             alt.Chart(idf_only)
@@ -70,9 +68,7 @@ def firstpage_callbacks(app):
             )
             .properties(width=333, height=250)
             .add_params(single)
-            # .add_selection(single)
         )
-
 
         spacer = (
             alt.Chart().mark_text().encode(text=alt.value("")).properties(height=125)
@@ -80,7 +76,5 @@ def firstpage_callbacks(app):
 
         centered_map_idf = alt.vconcat(spacer, map_idf_only, spacer)
         fig = (map_w_idf) | centered_map_idf
-
-        # print(fig.to_dict())
 
         return [fig.to_dict()]

@@ -1,8 +1,9 @@
 from dash import Output, Input, html
 
-from src.app.frontend.pages import homepage, page1
-from src.app.backend.homepage import home_callbacks
-from src.app.backend.page1 import firstpage_callbacks
+from frontend.pages import homepage, page1, barchartrace
+from backend.homepage import home_callbacks
+from backend.page1 import firstpage_callbacks
+from backend.barchartrace import bar_chart_race_callbacks
 
 
 def register_layout_callback(app):
@@ -12,6 +13,8 @@ def register_layout_callback(app):
             return homepage.create_layout(app)
         elif pathname == "/page-1":
             return page1.create_layout(app)
+        elif pathname == "/barchartrace":
+            return barchartrace.create_layout(app)
         # If the user tries to reach a different page, return a 404 message
         return html.Div(
             [
@@ -27,5 +30,6 @@ def register_callbacks(app):
     # Page specific callbacks
     home_callbacks(app)
     firstpage_callbacks(app)
+    bar_chart_race_callbacks(app)
     # Layout specific callbacks
     register_layout_callback(app)

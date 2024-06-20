@@ -19,5 +19,5 @@ def bar_chart_race_callbacks(app):
         fig = my_raceplot.plot(title='Top 10 prenoms',
                                item_label='Top 10 prenoms',
                                value_label='nombre',
-                               frame_duration=800)
+                               frame_duration=1000)
         return fig

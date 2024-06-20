@@ -3,7 +3,11 @@ import altair as alt
 import pandas as pd
 import logging
 import warnings
-warnings.filterwarnings("ignore", "Geometry is in a geographic CRS. Results from 'centroid' are likely incorrect.")
+
+warnings.filterwarnings(
+    "ignore",
+    "Geometry is in a geographic CRS. Results from 'centroid' are likely incorrect.",
+)
 
 
 # TODO: Setup global logger
@@ -16,9 +20,7 @@ def firstpage_callbacks(app):
         [
             Output("graph-altair", "spec"),
         ],
-        [
-            Input("slider-altair-map", "value"),
-        ],
+        [Input("slider-altair-map", "value"), Input("gender-control", "value")],
     )
     def update_altair_map(slider_year, selected_gender="male"):
         # Log callback activation
@@ -27,14 +29,18 @@ def firstpage_callbacks(app):
         logger.info(f"Selected gender: {selected_gender}")
 
         # Ensure 'annee' is treated as an integer
-        app.dpd_table['annee'] = app.dpd_table['annee'].astype(int)
+        app.dpd_table["annee"] = app.dpd_table["annee"].astype(int)
 
         # Select data for specific gender & year
         gender = 1 if selected_gender == "male" else 2
-        filtered_data = app.dpd_table[(app.dpd_table["annee"] == slider_year) & (app.dpd_table["sexe"] == gender)]
+        filtered_data = app.dpd_table[
+            (app.dpd_table["annee"] == slider_year) & (app.dpd_table["sexe"] == gender)
+        ]
 
         # Find most common name in each dopt
-        most_common_in_dpt = filtered_data.loc[filtered_data.groupby("dpt")["nombre"].idxmax()]
+        most_common_in_dpt = filtered_data.loc[
+            filtered_data.groupby("dpt")["nombre"].idxmax()
+        ]
 
         # Calc centroid coordinates for plotting
         most_common_in_dpt["long"] = most_common_in_dpt.geometry.centroid.x
@@ -60,7 +66,8 @@ def firstpage_callbacks(app):
 
             # Combine non-IDF & IDF data
             combined_data = pd.concat(
-                [most_common_in_dpt[~most_common_in_dpt["dpt"].isin(IDF)], regions_copy])
+                [most_common_in_dpt[~most_common_in_dpt["dpt"].isin(IDF)], regions_copy]
+            )
         else:
             combined_data = most_common_in_dpt
 
@@ -70,37 +77,54 @@ def firstpage_callbacks(app):
         # Color Encoding Definition
         color_encoding = alt.condition(
             selection,
-            alt.Color("prenoms:N", scale=alt.Scale(scheme="accent")),  # Explicitly set as nominal
-            alt.value("lightgray")
+            alt.Color(
+                "prenoms:N", scale=alt.Scale(scheme="accent")
+            ),  # Explicitly set as nominal
+            alt.value("lightgray"),
         )
 
         # Main Map with IDF
-        main_map = alt.Chart(combined_data).mark_geoshape(stroke="black").encode(
-            tooltip=[alt.Tooltip("prenoms:N"), alt.Tooltip("dpt:N"), alt.Tooltip("nombre:Q")],  # Explicitly set data types
-            color=color_encoding
-        ).properties(
-            width=666,
-            height=500
-        ).add_params(
-            selection
+        main_map = (
+            alt.Chart(combined_data)
+            .mark_geoshape(stroke="black")
+            .encode(
+                tooltip=[
+                    alt.Tooltip("prenoms:N"),
+                    alt.Tooltip("dpt:N"),
+                    alt.Tooltip("nombre:Q"),
+                ],  # Explicitly set data types
+                color=color_encoding,
+            )
+            .properties(width=666, height=500)
+            .add_params(selection)
         )
 
         # IDF Separate map
         if not idf_only.empty:
-            idf_map = alt.Chart(idf_only).mark_geoshape(stroke="black").encode(
-                tooltip=[alt.Tooltip("prenoms:N"), alt.Tooltip("dpt:N"), alt.Tooltip("nombre:Q")],
-                # Explicitly set data types
-                color=color_encoding,
-                text=alt.Text("prenoms:N")  # Explicitly set as nominal
-            ).properties(
-                width=333,
-                height=250
-            ).add_params(
-                selection
+            idf_map = (
+                alt.Chart(idf_only)
+                .mark_geoshape(stroke="black")
+                .encode(
+                    tooltip=[
+                        alt.Tooltip("prenoms:N"),
+                        alt.Tooltip("dpt:N"),
+                        alt.Tooltip("nombre:Q"),
+                    ],
+                    # Explicitly set data types
+                    color=color_encoding,
+                    text=alt.Text("prenoms:N"),  # Explicitly set as nominal
+                )
+                .properties(width=333, height=250)
+                .add_params(selection)
             )
 
             # Combining maps
-            spacer = alt.Chart().mark_text().encode(text=alt.value("")).properties(height=125)
+            spacer = (
+                alt.Chart()
+                .mark_text()
+                .encode(text=alt.value(""))
+                .properties(height=125)
+            )
             final_map = alt.concat(main_map, alt.vconcat(spacer, idf_map, spacer))
         else:
             final_map = main_map

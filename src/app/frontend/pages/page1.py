@@ -1,6 +1,7 @@
 from dash import html, dcc
 import dash_vega_components as dvc
 import dash_bootstrap_components as dbc
+import dash_mantine_components as dmc
 
 
 def create_layout(app):
@@ -10,6 +11,15 @@ def create_layout(app):
             html.P("Replica of homepage but in Altair"),
             dbc.Stack(
                 [
+                    dmc.SegmentedControl(
+                        id="gender-control",
+                        value="male",
+                        data=[
+                            {"value": "male", "label": "Male"},
+                            {"value": "female", "label": "Female"},
+                        ],
+                        mb=10,
+                    ),
                     html.Div(
                         dcc.Slider(
                             id="slider-altair-map",

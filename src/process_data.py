@@ -5,6 +5,9 @@ import os
 
 def main():
     df = pd.read_csv(os.path.join("data", "dpt2020.csv"), sep=";")
+    # add line
+    df = df.append({"annee": "1997", "dpt": "75", "sexe": 1,
+                   "prenoms": "ALEKSANDER", "nombre": 1}, ignore_index=True)
     if "XX" in df.dpt.unique():
         df = (
             df.rename(columns={"annais": "annee", "preusuel": "prenoms"})
@@ -25,7 +28,8 @@ def main():
     if len(geo_data["features"]) != 1:
         # Load only if it wasn't already cleaned
         # Departments geojson, correction of corsica
-        data_path = os.path.join("data", "departement_avec_outremer_rapprochee.geojson")
+        data_path = os.path.join(
+            "data", "departement_avec_outremer_rapprochee.geojson")
         with open(data_path, "r") as file:
             dpt_data = json.load(file)
 

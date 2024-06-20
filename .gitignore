@@ -86,6 +86,7 @@ ipython_config.py
 
 # Environments
 .venv
+nametrends/
 
 #Folders & altair cache files
 /data

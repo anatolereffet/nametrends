@@ -1,13 +1,13 @@
 import json
 import pandas as pd
 import os
+from pathlib import Path
 
 
 def main():
-    df = pd.read_csv(os.path.join("data", "dpt2020.csv"), sep=";")
-    # add line
-    df = df.append({"annee": "1997", "dpt": "75", "sexe": 1,
-                   "prenoms": "ALEKSANDER", "nombre": 1}, ignore_index=True)
+    data_folder = Path("./data/")
+    df = pd.read_csv(data_folder / "dpt2020.csv", sep=";")
+
     if "XX" in df.dpt.unique():
         df = (
             df.rename(columns={"annais": "annee", "preusuel": "prenoms"})
@@ -17,9 +17,13 @@ def main():
             .loc[lambda df: df["prenoms"].str.len() > 1]
             .sort_values("annee")
         )
-        df.to_csv(".\\data\\dpt2020.csv", sep=";", index=False)
+        df.to_csv(data_folder / "dpt2020.csv", sep=";", index=False)
     else:
         print("Skip dpt2020.csv cleaning")
+
+    df.loc[len(df.index)] = {"annee": "1997", "dpt": "75", "sexe": 1,
+                             "prenoms": "ALEKSANDER", "nombre": 1}
+    df = df.sort_values(by='annee').reset_index(drop=True)
 
     # IDF geojson
     with open(os.path.join("data", "idf.geojson"), "r") as file:

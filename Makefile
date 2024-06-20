@@ -1,11 +1,11 @@
 #Globals
-PYTHON_INTERPRETER = python3
+PYTHON_INTERPRETER = $(shell which python3)
 DIR_PATH = $(shell pwd)
 DPT_FILE = departement_avec_outremer_rapprochee.geojson
 REGION_FILE = idf.geojson
 
 requirements:
-	$(PYTHON_INTERPRETER) pip install -r requirements.txt
+	$(PYTHON_INTERPRETER) -m pip install -r requirements.txt
 
 pull_data:
 	@mkdir -p data
@@ -14,7 +14,7 @@ pull_data:
 	@test -e $(DIR_PATH)/data/$(REGION_FILE) || wget -O $(DIR_PATH)/data/$(REGION_FILE) https://raw.githubusercontent.com/Kaosamami/france-geojson/main/region_avec_outremer_rapprochée.geojson
 
 clean_data:
-	@$(PYTHON_INTERPRETER) src/process_data.py 
+	@$(PYTHON_INTERPRETER) src/process_data.py
 
 data: pull_data clean_data
 	@echo "Data pulled and cleaned."

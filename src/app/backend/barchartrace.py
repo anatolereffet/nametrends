@@ -14,9 +14,7 @@ def bar_chart_race_callbacks(app):
         grouped_df = data.groupby(["prenoms", "annee", "sexe"], as_index=False).agg(
             {"nombre": "sum"}
         )
-        print(grouped_df)
         grouped_male = grouped_df.loc[grouped_df["sexe"] == 1]
-        print(grouped_male)
         grouped_female = grouped_df.loc[grouped_df["sexe"] == 2]
         # Create bar plot race
         my_raceplot = barplot(

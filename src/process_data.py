@@ -21,10 +21,6 @@ def main():
     else:
         print("Skip dpt2020.csv cleaning")
 
-    df.loc[len(df.index)] = {"annee": "1997", "dpt": "75", "sexe": 1,
-                             "prenoms": "ALEKSANDER", "nombre": 1}
-    df = df.sort_values(by='annee').reset_index(drop=True)
-
     # IDF geojson
     with open(os.path.join("data", "idf.geojson"), "r") as file:
         geo_data = json.load(file)
@@ -32,8 +28,7 @@ def main():
     if len(geo_data["features"]) != 1:
         # Load only if it wasn't already cleaned
         # Departments geojson, correction of corsica
-        data_path = os.path.join(
-            "data", "departement_avec_outremer_rapprochee.geojson")
+        data_path = os.path.join("data", "departement_avec_outremer_rapprochee.geojson")
         with open(data_path, "r") as file:
             dpt_data = json.load(file)
 
@@ -54,7 +49,9 @@ def main():
         geo_data["features"][0]["properties"]["code"] = "IDF"
 
         # Save the merged file
-        with open(os.path.join("data", "departement_avec_outremer_rapprochee.geojson"), "w+") as f:
+        with open(
+            os.path.join("data", "departement_avec_outremer_rapprochee.geojson"), "w+"
+        ) as f:
             json.dump(dpt_data, f, indent=2)
 
         with open(os.path.join("data", "idf.geojson"), "w+") as f:

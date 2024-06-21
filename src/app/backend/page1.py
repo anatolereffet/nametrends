@@ -111,6 +111,17 @@ def firstpage_callbacks(app):
         else:
             combined_data = most_common_in_dpt
 
+        tmp_legend = (
+            combined_data.groupby("prenoms", as_index=False)
+            .agg({"nombre": "sum"})
+            .sort_values(by="nombre", ascending=False)
+            .prenoms.values
+        )
+
+        # Handle pre-1961 departments that didn't exist
+        sorting_order = (
+            tmp_legend + ["N/A"] if "N/A" in idf_only.prenoms.values else tmp_legend
+        )
         # Create selection for interactive filtering
         selection = alt.selection_point()
 
@@ -118,8 +129,10 @@ def firstpage_callbacks(app):
         color_encoding = alt.condition(
             selection,
             alt.Color(
-                "prenoms:N", scale=alt.Scale(scheme="accent")
-            ),  # Explicitly set as nominal
+                "prenoms:N",
+                scale=alt.Scale(scheme="accent"),
+                sort=sorting_order,
+            ),
             alt.value("lightgray"),
         )
 

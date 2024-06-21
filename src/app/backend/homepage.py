@@ -8,7 +8,6 @@ def home_callbacks(app):
         [
             Output("graph", "figure"),
             Output("chartyear", "figure"),
-            Output("table-container", "children"),
         ],
         [Input("dropdown-names", "value"), Input("dropdown-year", "value")],
     )
@@ -58,10 +57,5 @@ def home_callbacks(app):
         fig.update_geos(fitbounds="geojson", visible=False)
         fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0}, dragmode=False)
 
-        table = dash_table.DataTable(
-            columns=[{"name": i, "id": i} for i in data.columns],
-            data=data.sort_values("nombre", ascending=False).to_dict("records"),
-        )
-
         chart = px.bar(timeseries_data, x="annee", y="nombre")
-        return fig, chart, table
+        return fig, chart

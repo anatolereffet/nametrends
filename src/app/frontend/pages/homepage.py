@@ -33,7 +33,6 @@ def create_layout(app):
                     ),
                 ]
             ),
-            html.Div(id="table-container"),
         ]
     )
     return layout

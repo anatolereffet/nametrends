@@ -3,6 +3,7 @@ import altair as alt
 import pandas as pd
 import logging
 import warnings
+from src.app.backend.utils import FRENCH_DEPARTMENTS
 
 warnings.filterwarnings(
     "ignore",
@@ -13,6 +14,41 @@ warnings.filterwarnings(
 # TODO: Setup global logger
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+
+def add_empty_departments(
+    table: pd.DataFrame, departments_polygons: pd.DataFrame, year: int, sex: int
+) -> pd.DataFrame:
+    """
+    Add the missing departments with the corresponding polygons.
+    This is a hardcoded function for the year and sex
+    will be fixed later
+    Args:
+        table (pd.DataFrame): filtered table
+        departments_polygons (pd.DataFrame): dataframe holding code, name and shape of the departments
+    Returns:
+        pd.DataFrame: full table with missing polygons
+    """
+    missing_dpts = sorted(
+        [str(dpt) for dpt in FRENCH_DEPARTMENTS if dpt not in table.dpt.unique()]
+    )
+    missing_polygons = departments_polygons[
+        departments_polygons["code"].isin(missing_dpts)
+    ].set_index("code")
+
+    mia_dpts = {
+        "code": missing_dpts,
+        "nom": missing_polygons.loc[missing_dpts, "nom"].values,
+        "geometry": missing_polygons.loc[missing_dpts, "geometry"].values,
+        "sexe": [sex] * len(missing_dpts),
+        "prenoms": ["N/A"] * len(missing_dpts),
+        "annee": [year] * len(missing_dpts),
+        "dpt": missing_dpts,
+        "nombre": [0] * len(missing_dpts),
+    }
+
+    df = pd.concat([table, pd.DataFrame(mia_dpts)]).reset_index()
+    return df
 
 
 def firstpage_callbacks(app):
@@ -36,6 +72,10 @@ def firstpage_callbacks(app):
         filtered_data = app.dpd_table[
             (app.dpd_table["annee"] == slider_year) & (app.dpd_table["sexe"] == gender)
         ]
+
+        filtered_data = add_empty_departments(
+            filtered_data, app.departments, slider_year, gender
+        )
 
         # Find most common name in each dopt
         most_common_in_dpt = filtered_data.loc[

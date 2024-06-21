@@ -21,24 +21,15 @@ def create_layout(app):
                         mb=10,
                     ),
                     html.Div(
-                        dcc.Slider(
+                        dmc.Slider(
                             id="slider-altair-map",
-                            min=1900,  # till 1940, the map doesn't shift
-                            max=2020,
                             value=1900,
-                            marks={year: "" for year in range(1900, 2021, 1)},
-                            tooltip={
-                                "placement": "bottom",
-                                "always_visible": True,
-                                "style": {
-                                    "font-style": "italic",
-                                    "color": "White",
-                                    "fontSize": "20px",
-                                },
-                            },
-                            step=None,
+                            min=1900,
+                            max=2020,
+                            step=1,
+                            labelAlwaysOn=True,
                             updatemode="mouseup",
-                        ),
+                        )
                     ),
                     html.Div(
                         dvc.Vega(

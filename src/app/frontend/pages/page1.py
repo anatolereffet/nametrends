@@ -7,8 +7,11 @@ import dash_mantine_components as dmc
 def create_layout(app):
     layout = html.Div(
         [
-            html.H1("Altair Maps"),
-            html.P("Replica of homepage but in Altair"),
+            html.H1("Altair Maps : Highest given name in France by year and gender"),
+            html.P("Select wether you want to check for male name or female given name. Then select the year you want to check. The map will show the most "
+                   "given name in France for the selected year. You can pass your cursor over the map to see the name and the number of people who received it. "
+                   "Note that we did not work on the unpopular names because there are too many names at 0 (the rarest names) and so it was for us unecessary "
+                   "to select few of them at random."),
             dbc.Stack(
                 [
                     dmc.SegmentedControl(
@@ -39,7 +42,7 @@ def create_layout(app):
                         className="centered_div",
                     ),
                 ],
-                gap=3,
+                gap=4,
             ),
         ]
     )

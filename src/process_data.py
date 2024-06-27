@@ -5,9 +5,8 @@ from pathlib import Path
 
 
 def main():
-    data_folder = Path("./data/")
-    df = pd.read_csv(data_folder / "dpt2020.csv", sep=";")
 
+    df = pd.read_csv(os.path.join("data", "dpt2020.csv"), sep=";")
     if "XX" in df.dpt.unique():
         df = (
             df.rename(columns={"annais": "annee", "preusuel": "prenoms"})
@@ -17,7 +16,7 @@ def main():
             .loc[lambda df: df["prenoms"].str.len() > 1]
             .sort_values("annee")
         )
-        df.to_csv(data_folder / "dpt2020.csv", sep=";", index=False)
+        df.to_csv(os.path.join("data", "dpt2020.csv"), sep=";", index=False)
     else:
         print("Skip dpt2020.csv cleaning")
 
@@ -28,7 +27,8 @@ def main():
     if len(geo_data["features"]) != 1:
         # Load only if it wasn't already cleaned
         # Departments geojson, correction of corsica
-        data_path = os.path.join("data", "departement_avec_outremer_rapprochee.geojson")
+        data_path = os.path.join(
+            "data", "departement_avec_outremer_rapprochee.geojson")
         with open(data_path, "r") as file:
             dpt_data = json.load(file)
 
@@ -50,7 +50,8 @@ def main():
 
         # Save the merged file
         with open(
-            os.path.join("data", "departement_avec_outremer_rapprochee.geojson"), "w+"
+            os.path.join(
+                "data", "departement_avec_outremer_rapprochee.geojson"), "w+"
         ) as f:
             json.dump(dpt_data, f, indent=2)
 

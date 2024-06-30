@@ -3,10 +3,8 @@ import dash_mantine_components as dmc
 
 
 def create_layout(app):
-    unique_names = sorted(app.df.prenoms.unique())
-
-    layout = html.Div(
-        [
+    return html.Div(
+        children=[
             dmc.Paper(
                 className="graph-standalone",
                 shadow="sm",
@@ -15,7 +13,7 @@ def create_layout(app):
                         style={"height": "100%", "width": "100%"},
                         children=[
                             dcc.Graph(
-                                id="chartyear",
+                                id="sunburst-plot",
                                 style={
                                     "height": "100%",
                                     "width": "100%",
@@ -26,7 +24,7 @@ def create_layout(app):
                     dmc.Center(
                         children=[
                             dmc.Text(
-                                "Select a name",
+                                "Select a year",
                                 p=40,
                                 weight=700,
                                 italic=True,
@@ -34,19 +32,15 @@ def create_layout(app):
                             ),
                         ],
                     ),
-                    dmc.Center(
-                        [
-                            dmc.MultiSelect(
-                                id="dropdown-names",
-                                style={"width": "50%"},
-                                clearable=True,
-                                value=["JEAN", "DAVID", "ADAM"],
-                                data=unique_names,
-                                searchable=True,
-                                w=200,
-                                mb=10,
-                            )
-                        ]
+                    dmc.Slider(
+                        id="slider-sunburst",
+                        value=1900,
+                        min=1900,
+                        max=2020,
+                        step=1,
+                        labelAlwaysOn=True,
+                        updatemode="mouseup",
+                        classNames={"label": "custom-tooltip"},
                     ),
                 ],
             ),
@@ -56,26 +50,27 @@ def create_layout(app):
                 children=[
                     dmc.Center(
                         children=[
-                            dmc.Title("Time Trends", order=1),
+                            dmc.Title("Gender & Religion", order=1),
                         ]
                     ),
                     dmc.Text(
-                        "The evolution of baby names over time reflects cultural shifts, societal influences, and trends. "
-                        "Some names maintain consistent popularity due to their classical appeal, while others "
-                        "experience brief surges influenced by pop culture, celebrities or historical events",
+                        "This sunburst chart visualization explores gender effects "
+                        "on name popularity over time. Names are categorized by gender "
+                        "in the first layer, then divided into Christian and non-Christian "
+                        "groups, we then are able to display the top 5 names given in each group",
                         p=40,
                         weight=500,
                         size="md",
                     ),
                     dmc.Text(
-                        "By selecting one or multiple names, you'll see either a histogram (single name) or a line chart. "
-                        "The line chart on a y-log scale helps visualizing trends, such as Jean, David and Adam",
+                        "The distinction between Christian and non-Christian names highlights "
+                        "the influence on religion on naming conventions, particularly noting"
+                        "the prominence of Christian names in the early 20th century.",
                         p=40,
                         weight=500,
                         size="md",
                     ),
                 ],
             ),
-        ]
+        ],
     )
-    return layout

@@ -1,6 +1,10 @@
 import pandas as pd
 import warnings
-warnings.filterwarnings("ignore", "Geometry is in a geographic CRS. Results from 'centroid' are likely incorrect.")
+
+warnings.filterwarnings(
+    "ignore",
+    "Geometry is in a geographic CRS. Results from 'centroid' are likely incorrect.",
+)
 
 FRENCH_DEPARTMENTS = [
     "01",
@@ -160,59 +164,3 @@ def add_missing_years(df: pd.DataFrame) -> pd.DataFrame:
     result_df = pd.concat([df, tmp_df]).reset_index().drop(columns=["index"])
 
     return result_df
-
-
-def precompute_data(names, regions, gender):
-    """
-    Precompute the most common names for each year and specified gender.
-
-    Parameters:
-    - names: GeoDataFrame with names data.
-    - regions: GeoDataFrame with regions data.
-    - gender: int, 1 for male and 2 for female names.
-
-    Returns:
-    - Dictionary with precomputed data for each year.
-    """
-    # IDF departments
-    IDF = ["75", "77", "78", "91", "92", "93", "94", "95"]
-
-    precomputed_results = {}
-
-    years = names["annee"].unique()
-    for year in years:
-        # Filter data for given year and specified gender
-        filtered_data = names[(names["annee"] == year) & (names["sexe"] == gender)]
-
-        # Find most common name in each dpt
-        most_common_in_dpt = filtered_data.loc[filtered_data.groupby("dpt")["nombre"].idxmax()]
-
-        # Calc centroid
-        most_common_in_dpt["long"] = most_common_in_dpt.geometry.centroid.x
-        most_common_in_dpt["lat"] = most_common_in_dpt.geometry.centroid.y
-        idf_only = most_common_in_dpt[most_common_in_dpt["dpt"].isin(IDF)]
-
-        # Specific processing for IDF
-        most_common_name_idf = idf_only.groupby("prenoms")["nombre"].sum().idxmax()
-        most_common_idf = idf_only[idf_only["prenoms"] == most_common_name_idf]
-
-        # Copy & update regions DataFrame
-        regions_copy = regions.copy()
-        regions_copy["prenoms"] = most_common_name_idf
-        regions_copy["nombre"] = most_common_idf["nombre"].sum()
-        regions_copy["sexe"] = most_common_idf["sexe"].mode().iloc[0]
-        regions_copy["long"] = regions_copy.geometry.centroid.x
-        regions_copy["lat"] = regions_copy.geometry.centroid.y
-        regions_copy["dpt"] = "IDF"
-
-        # Combine IDF & non-IDF data
-        combined_data = pd.concat(
-            [most_common_in_dpt[~most_common_in_dpt["dpt"].isin(IDF)], regions_copy])
-
-        # Storing precomputed data
-        precomputed_results[year] = {
-            "combined_data": combined_data,
-            "idf_only": idf_only
-        }
-
-    return precomputed_results

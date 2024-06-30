@@ -1,9 +1,10 @@
 from dash import Output, Input, html
 
-from frontend.pages import homepage, page1, barchartrace
+from frontend.pages import homepage, regionaleffect, sunburst
+
 from backend.homepage import home_callbacks
-from backend.page1 import firstpage_callbacks
-from backend.barchartrace import bar_chart_race_callbacks
+from backend.sunburst import sunburst_callbacks
+from backend.regionaleffect import regionaleffect_callbacks
 
 
 def register_layout_callback(app):
@@ -11,10 +12,10 @@ def register_layout_callback(app):
     def render_page_content(pathname):
         if pathname == "/" or pathname == "/homepage":
             return homepage.create_layout(app)
-        elif pathname == "/page-1":
-            return page1.create_layout(app)
-        elif pathname == "/barchartrace":
-            return barchartrace.create_layout(app)
+        elif pathname == "/regionaleffect":
+            return regionaleffect.create_layout(app)
+        elif pathname == "/sunburst":
+            return sunburst.create_layout(app)
         # If the user tries to reach a different page, return a 404 message
         return html.Div(
             [
@@ -29,7 +30,7 @@ def register_layout_callback(app):
 def register_callbacks(app):
     # Page specific callbacks
     home_callbacks(app)
-    firstpage_callbacks(app)
-    bar_chart_race_callbacks(app)
+    regionaleffect_callbacks(app)
+    sunburst_callbacks(app)
     # Layout specific callbacks
     register_layout_callback(app)

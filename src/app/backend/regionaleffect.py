@@ -51,7 +51,7 @@ def add_empty_departments(
     return df
 
 
-def firstpage_callbacks(app):
+def regionaleffect_callbacks(app):
     @app.callback(
         [
             Output("graph-altair", "spec"),
@@ -69,9 +69,12 @@ def firstpage_callbacks(app):
 
         # Select data for specific gender & year
         gender = 1 if selected_gender == "male" else 2
+
         filtered_data = app.dpd_table[
-            (app.dpd_table["annee"] == slider_year) & (app.dpd_table["sexe"] == gender)
+            (app.dpd_table["annee"] >= slider_year[0])
+            & (app.dpd_table["annee"] <= slider_year[1])
         ]
+        filtered_data = filtered_data[filtered_data["sexe"] == gender]
 
         filtered_data = add_empty_departments(
             filtered_data, app.departments, slider_year, gender

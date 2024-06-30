@@ -6,7 +6,6 @@ import os
 from backend.callbacks import register_callbacks
 from frontend.layout import serve_layout
 from backend.load_data import load_map, load_babynames
-from backend.utils import precompute_data
 
 
 def create_app():
@@ -44,4 +43,4 @@ def create_app():
 app = create_app()
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)

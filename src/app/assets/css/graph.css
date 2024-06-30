@@ -3,3 +3,54 @@
     height: 100%;
     display: inline-block
 }
+
+.graph-standalone {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 850px;
+    height: 700px;
+    border-radius: 15px;
+    padding: 10px;
+} 
+
+.graph-standalone-altair {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 1150px;
+    height: 700px;
+    border-radius: 15px;
+    padding: 10px;
+} 
+
+.text-explanation {
+    position : absolute;
+    top: 50%;
+    left: 25%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    height: 700px;
+    border-radius: 15px;
+    padding: 10px;
+}
+
+.text-explanation-altair {
+    position : absolute;
+    top: 50%;
+    left: 19%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    height: 700px;
+    border-radius: 15px;
+    padding: 10px;
+}
+
+.custom-tooltip {
+    top: 110% !important; 
+    margin-top: 10px !important; 
+    left: 50% !important;
+    transform: translateX(-50%) !important; 
+}

@@ -1,20 +1,30 @@
 import dash_bootstrap_components as dbc
-from dash import html
+from dash import html, dcc
+import dash_mantine_components as dmc
+
+
+def page_link(pageHref):
+    href = f"/{pageHref}"
+    style = {}
+
+    emoji = {"homepage": "1️⃣", "regionaleffect": "2️⃣", "sunburst": "3️⃣"}
+
+    return dcc.Link(
+        href=href,
+        children=[
+            dmc.ActionIcon(
+                id={"type": "pages-links", "index": pageHref},
+                n_clicks=0,
+                style=style,
+                children=[emoji.get(pageHref)],
+            )
+        ],
+    )
+
+
+_pages = ["homepage", "regionaleffect", "sunburst"]
 
 sidebar = html.Div(
-    [
-        html.H2("French Name Trends", className="display-4"),
-        html.Hr(),
-        dbc.Nav(
-            [
-                dbc.NavLink("Home", href="/", active="exact"),
-                dbc.NavLink("Page 1", href="/page-1", active="exact"),
-                dbc.NavLink("Barchar race", href="/barchartrace",
-                            active="exact"),
-            ],
-            vertical=True,
-            pills=True,
-        ),
-    ],
-    className="sidebar",
+    className="centered_navbar",
+    children=[page_link(p) for p in _pages],
 )
